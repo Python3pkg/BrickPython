@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2014 Charles Weir.  Shared under the MIT Licence.
 
-from . import BrickPi
+import BrickPi
 
 class Sensor():
     '''Sensor, representing a sensor attached to one of the BrickPi ports.

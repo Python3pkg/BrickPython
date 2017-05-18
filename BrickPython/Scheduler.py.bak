@@ -4,7 +4,7 @@
 # Copyright (c) 2014 Charles Weir.  Shared under the MIT Licence.
 
 import threading
-from .Coroutine import Coroutine, StopCoroutineException
+from Coroutine import Coroutine, StopCoroutineException
 
 class GeneratorCoroutineWrapper(Coroutine):
     '''Internal: Wraps a generator-style coroutine with a thread'''
@@ -98,7 +98,7 @@ class Scheduler():
         self.updateCoroutine = Scheduler.makeCoroutine(coroutine)
 
     def findCoroutineForGenerator(self, generator):
-        return next((c for c in self.coroutines if c.generator == generator))
+        return (c for c in self.coroutines if c.generator == generator).next()
 
     def stopCoroutine( self, *coroutineList ):
         'Terminates the given one or more coroutines'
@@ -134,7 +134,7 @@ class Scheduler():
         while True:
             for coroutine in coroutineList:
                 try:
-                    next(coroutine)
+                    coroutine.next()
                 except (StopIteration, StopCoroutineException):
                     return # CW - I don't understand it, but we don't seem to need to terminate the others explicitly.
             yield
@@ -146,7 +146,7 @@ class Scheduler():
         while coroutines != []:
             for coroutine in coroutines:
                 try:
-                    next(coroutine)
+                    coroutine.next()
                 except (StopIteration, StopCoroutineException):
                     coroutines.remove( coroutine )
             yield

@@ -2,10 +2,10 @@
 #
 # Copyright (c) 2014 Charles Weir.  Shared under the MIT Licence.
 
-from .Motor import Motor
-from .Sensor import Sensor
-from . import BrickPi as BP
-from .Scheduler import Scheduler
+from Motor import Motor
+from Sensor import Sensor
+import BrickPi as BP
+from Scheduler import Scheduler
 
 class BrickPiWrapper(Scheduler):
     '''
@@ -22,7 +22,7 @@ class BrickPiWrapper(Scheduler):
         self.sensors = {  }
         BP.BrickPiSetup()  # setup the serial port for communication
 
-        for port, sensorType in list(portTypes.items()):
+        for port, sensorType in portTypes.items():
             if isinstance(sensorType, int):
                 sensor = Sensor(port, sensorType)
             else:
@@ -46,7 +46,7 @@ class BrickPiWrapper(Scheduler):
     def update(self):
         # Communicates with the BrickPi processor, sending current motor settings, and receiving sensor values.
         global BrickPi
-        for motor in list(self.motors.values()):
+        for motor in self.motors.values():
             BP.BrickPi.MotorEnable[motor.port] = int(motor.enabled())
             BP.BrickPi.MotorSpeed[motor.port] = motor.power()
 
@@ -54,15 +54,15 @@ class BrickPiWrapper(Scheduler):
         # Takes about 6ms.
         BP.BrickPiUpdateValues()
 
-        for motor in list(self.motors.values()):
+        for motor in self.motors.values():
             position = BP.BrickPi.Encoder[motor.port]
-            if not isinstance( position, int ):  # For mac
+            if not isinstance( position, ( int, long ) ):  # For mac
                 position = 0
             motor.updatePosition( position )
 
-        for sensor in list(self.sensors.values()):
+        for sensor in self.sensors.values():
             value = BP.BrickPi.Sensor[sensor.port]
-            if not isinstance( value, int ):  # For mac
+            if not isinstance( value, ( int, long ) ):  # For mac
                 value = 0
             sensor.updateValue( value )
 

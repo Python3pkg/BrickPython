@@ -50,7 +50,7 @@ class TestScheduler(unittest.TestCase):
     def checkCoroutineFinished(coroutine):
         # Fails the test if the given coroutine hasn't finished.
         try:
-            next(coroutine)
+            coroutine.next()
             assert(False)
         except StopIteration:
             pass
@@ -59,7 +59,7 @@ class TestScheduler(unittest.TestCase):
     def setUp(self):
         TestScheduler.coroutineCalls = []
         TestScheduler.oldCurrentTimeMillis = Scheduler.currentTimeMillis
-        Scheduler.currentTimeMillis =  Mock( side_effect = range(0,10000) ) # Each call answers the next integer
+        Scheduler.currentTimeMillis =  Mock( side_effect = xrange(0,10000) ) # Each call answers the next integer
         self.scheduler = Scheduler()
 
     def tearDown(self):
@@ -184,7 +184,7 @@ class TestScheduler(unittest.TestCase):
         for i in self.scheduler.runTillAllComplete( *[TestScheduler.dummyCoroutine(1,i) for i in [2,3,4]] ):
             pass
         #  they all run to completion:
-        print(TestScheduler.coroutineCalls)
+        print TestScheduler.coroutineCalls
         assert( TestScheduler.coroutineCalls == [1,1,1,2,2,3] )
         assert( self.scheduler.numCoroutines() == 0)
 
@@ -193,7 +193,7 @@ class TestScheduler(unittest.TestCase):
         for i in self.scheduler.withTimeout(10, TestScheduler.dummyCoroutineThatDoesCleanup(1,99) ):
             pass
         # It completes at around the timeout, and does cleanup:
-        print(TestScheduler.coroutineCalls)
+        print TestScheduler.coroutineCalls
         self.assertTrue( 0 < TestScheduler.coroutineCalls[-2] <= 10) # N.b. currentTimeMillis is called more than once per doWork call.
         self.assertEquals( TestScheduler.coroutineCalls[-1], -1 )
 
@@ -248,7 +248,7 @@ class TestScheduler(unittest.TestCase):
         coroutine = scheduler.waitFor( lambda ap: len(ap) > 0, arrayParameter )
         # It runs
         for i in range(0,5):
-            next(coroutine)
+            coroutine.next()
         # Until the function returns true.
         arrayParameter.append(1)
         TestScheduler.checkCoroutineFinished( coroutine )

@@ -13,12 +13,12 @@ class TestMotor(unittest.TestCase):
     ''' Tests for the Motor class, especially for PID Servo Motor functionality'''
     def setUp(self):
         self.saveTime = Scheduler.currentTimeMillis
-        Scheduler.currentTimeMillis = Mock(side_effect = range(1,10000))
+        Scheduler.currentTimeMillis = Mock(side_effect = xrange(1,10000))
         self.bp = BrickPiWrapper()
         motor = self.motor = self.bp.motor( 'A' )
         #motor.position = Mock()
         motor.timeMillis = Mock()
-        motor.timeMillis.side_effect = list(range(0,9999))
+        motor.timeMillis.side_effect = range(0,9999)
 
     def tearDown(self):
         Scheduler.currentTimeMillis = self.saveTime
@@ -44,7 +44,7 @@ class TestMotor(unittest.TestCase):
         motor.updatePosition(1)
         motor.updatePosition(2)
         # The speed is 1000 clicks per second.
-        print(motor.speed())
+        print motor.speed()
         assert( int(motor.speed()) == 1000)
 
     # Tests for positionUsingPIDAlgorithm:
@@ -56,7 +56,7 @@ class TestMotor(unittest.TestCase):
         generator = motor.positionUsingPIDAlgorithmWithoutTimeout( 10 )
         # it keeps going
         for i in generator:
-            motor.updatePosition( next(positions) )
+            motor.updatePosition( positions.next() )
             assert( motor.enabled() )
         # until it reaches the target position
         assert( motor.position() == 10 )
@@ -70,7 +70,7 @@ class TestMotor(unittest.TestCase):
         positions = [0,99,99,99].__iter__()
         generator = motor.positionUsingPIDAlgorithmWithoutTimeout( 100 )
         for i in generator:
-            motor.updatePosition( next(positions) )
+            motor.updatePosition( positions.next() )
         # it still completes :
         self.assertEquals( motor.position(), 99 )
         self.assertFalse( motor.enabled() )
@@ -81,8 +81,8 @@ class TestMotor(unittest.TestCase):
         positions = [0,50,100,150].__iter__()
         co = motor.positionUsingPIDAlgorithm( 100 )
         for i in range(3):
-            motor.updatePosition( next(positions) )
-            next(co)
+            motor.updatePosition( positions.next() )
+            co.next()
         # it doesn't stop (no StopIteration exception has been thrown)
 
     def testPowerIsFunctionOfDistance(self):
@@ -90,9 +90,9 @@ class TestMotor(unittest.TestCase):
         # When it's some distance from the target, but not moving
         co = motor.positionUsingPIDAlgorithmWithoutTimeout( 100 )
         motor.updatePosition( 0 )
-        next(co)
+        co.next()
         motor.updatePosition( 0 )
-        next(co)
+        co.next()
         # There's power to the motor in the right direction.
         assert( motor.power() > 0 )
 
@@ -102,9 +102,9 @@ class TestMotor(unittest.TestCase):
         co = motor.positionUsingPIDAlgorithmWithoutTimeout( 100 )
         # when it reaches the target
         motor.updatePosition( 0 )
-        next(co)
+        co.next()
         motor.updatePosition( 100 )
-        next(co)
+        co.next()
         # It doesn't finish and the power is in reverse.
         assert( motor.power() < 0 )
 
@@ -113,13 +113,13 @@ class TestMotor(unittest.TestCase):
         # When the motor isn't moving and is some distance from the target
         co = motor.positionUsingPIDAlgorithmWithoutTimeout( 100 )
         # And we have quite long work cycles:
-        motor.timeMillis.side_effect = list(range(0,990,20))
+        motor.timeMillis.side_effect = range(0,990,20)
         # The motor power increases with time
         motor.updatePosition( 0 )
-        next(co)
+        co.next()
         p1 = motor.power()
         motor.updatePosition( 0 )
-        next(co)
+        co.next()
         p2 = motor.power()
         self.assertGreater( p2, p1 )
 
@@ -127,12 +127,12 @@ class TestMotor(unittest.TestCase):
         # with with longer work cycles and a different motor
         motorB = self.bp.motor( 'B' )
         motorB.timeMillis = Mock()
-        motorB.timeMillis.side_effect = list(range(0,990,40))
+        motorB.timeMillis.side_effect = range(0,990,40)
         co = motorB.positionUsingPIDAlgorithmWithoutTimeout( 100 )
         motorB.updatePosition( 0 )
-        next(co)
+        co.next()
         motorB.updatePosition( 0 )
-        next(co)
+        co.next()
         # then we get a larger power reading than before
         self.assertGreater( motorB.power(), p2 )
 
@@ -141,7 +141,7 @@ class TestMotor(unittest.TestCase):
         motor = self.motor
         co = motor.positionUsingPIDAlgorithm( 100 )
         # If the motor never reaches the target in 6 seconds:
-        for i in range(0,6000/50):
+        for i in xrange(0,6000/50):
             self.bp.doWork()
         # It terminates
         self.assertFalse( self.bp.stillRunning( co ) )
@@ -164,7 +164,7 @@ class TestMotor(unittest.TestCase):
         motor = self.motor
         # if we start the motor
         co = motor.positionUsingPIDAlgorithmWithoutTimeout( 100 )
-        next(co)
+        co.next()
         assert( motor.enabled() )
         # then stop the coroutine
         try:

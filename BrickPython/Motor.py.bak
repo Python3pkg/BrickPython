@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2014 Charles Weir.  Shared under the MIT Licence.
 
-from .Scheduler import Scheduler
+from Scheduler import Scheduler
 import logging
 
 class PIDSetting():

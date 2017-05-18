@@ -28,13 +28,13 @@ class App(TkApplication):
         sensor = self.sensor(sensorId)
         while True:
             for i in sensor.waitForChange(): yield
-            print(sensor)
+            print sensor
 
     def showSensorValues(self, sensorId):
         sensor = self.sensor(sensorId)
         while True:
             for i in self.waitMilliseconds(1000): yield
-            print(sensor)
+            print sensor
 
 if __name__ == "__main__":
     logging.basicConfig(format='%(message)s', level=logging.DEBUG) # All log messages printed to console.

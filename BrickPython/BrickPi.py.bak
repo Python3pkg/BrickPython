@@ -205,9 +205,9 @@ class button:
 
 	#Show button values
 	def show_val(self):
-		print("ljb","rjb","d","c","b","a","l2","r2","l1","r1","tri","cir","cro","sqr","ljx","ljy","rjx","rjy")
-		print(self.ljb," ",self.rjb," ",self.d,self.c,self.b,self.a,self.l2,"",self.r2,"",self.l1,"",self.r1,"",self.tri," ",self.cir," ",self.cro," ",self.sqr," ",self.ljx," ",self.ljy," ",self.rjx," ",self.rjy)
-		print("")
+		print "ljb","rjb","d","c","b","a","l2","r2","l1","r1","tri","cir","cro","sqr","ljx","ljy","rjx","rjy"
+		print self.ljb," ",self.rjb," ",self.d,self.c,self.b,self.a,self.l2,"",self.r2,"",self.l1,"",self.r1,"",self.tri," ",self.cir," ",self.cro," ",self.sqr," ",self.ljx," ",self.ljy," ",self.rjx," ",self.rjy
+		print ""
 
 
 def BrickPiChangeAddress(OldAddr, NewAddr):

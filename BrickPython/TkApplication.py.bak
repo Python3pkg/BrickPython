@@ -4,9 +4,9 @@
 #
 # Copyright (c) 2014 Charles Weir.  Shared under the MIT Licence.
 
-import tkinter as tk
+import Tkinter as tk
 
-from .BrickPiWrapper import BrickPiWrapper
+from BrickPiWrapper import BrickPiWrapper
 import logging
 
 class TkApplication(BrickPiWrapper):

@@ -4,7 +4,7 @@
 # Copyright (c) 2014 Charles Weir.  Shared under the MIT Licence.
 
 
-from .BrickPiWrapper import BrickPiWrapper
+from BrickPiWrapper import BrickPiWrapper
 import time
 
 class CommandLineApplication(BrickPiWrapper):
